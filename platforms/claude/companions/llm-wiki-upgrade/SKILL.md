@@ -30,7 +30,7 @@ echo "CURRENT_VERSION=$OLD_VERSION"
 
 ```bash
 TMP_DIR=$(mktemp -d)
-git clone --depth 1 https://github.com/sdyckjq-lab/llm-wiki-skill.git "$TMP_DIR/llm-wiki-skill" 2>&1
+git clone --depth 1 https://github.com/gugemailing-hub/llm-wiki-skill-.git "$TMP_DIR/llm-wiki-skill" 2>&1
 echo "CLONE_EXIT=$?"
 ```
 
@@ -93,3 +93,4 @@ llm-wiki $NEW_VERSION 升级完成（从 $OLD_VERSION）
 
 如果需要开启或刷新网页 / X / 微信公众号 / YouTube / 知乎自动提取功能，可以告诉我执行带 --with-optional-adapters 的升级。
 ```
+
