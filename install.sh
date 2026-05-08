@@ -617,7 +617,21 @@ if [ "$UPGRADE" -eq 1 ]; then
     fi
 
     run_cmd mkdir -p "$upgrade_target"
+
+    # 备份本地添加的脚本（上游不存在的文件），upgrade 后恢复
+    _backup_append_log=""
+    if [ -f "$upgrade_target/scripts/append-log.sh" ]; then
+      _backup_append_log=$(mktemp)
+      cp "$upgrade_target/scripts/append-log.sh" "$_backup_append_log"
+    fi
     install_bundle "$upgrade_target"
+
+    # 恢复本地脚本
+    if [ -n "$_backup_append_log" ] && [ -f "$_backup_append_log" ]; then
+      cp "$_backup_append_log" "$upgrade_target/scripts/append-log.sh"
+      chmod +x "$upgrade_target/scripts/append-log.sh"
+      rm -f "$_backup_append_log"
+    fi
     install_companion_skills "$upgrade_platform" "$upgrade_root"
     bootstrap_optional_adapters "$upgrade_root"
     ok "$upgrade_platform 的 llm-wiki 已更新"
@@ -720,3 +734,4 @@ fi
 
 echo ""
 ok "llm-wiki 已准备完成"
+
