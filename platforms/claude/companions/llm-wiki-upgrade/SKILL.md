@@ -30,7 +30,7 @@ echo "CURRENT_VERSION=$OLD_VERSION"
 
 ```bash
 TMP_DIR=$(mktemp -d)
-git clone --depth 1 https://github.com/gugemailing-hub/llm-wiki-skill-.git "$TMP_DIR/llm-wiki-skill" 2>&1
+git clone --depth 1 https://github.com/gugemailing-hub/llm-wiki-skill-enhance.git "$TMP_DIR/llm-wiki-skill" 2>&1
 echo "CLONE_EXIT=$?"
 ```
 
