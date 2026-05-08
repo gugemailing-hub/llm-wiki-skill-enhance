@@ -451,9 +451,14 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
    - 在对应分类下添加新条目
    - 更新概览统计数字
 
-12. **更新 log.md**：
-   - log.md 追加格式：`## {日期} ingest | {素材标题}`
-   - 记录新增和更新的页面列表
+12. **更新 log.md**（必须使用脚本，禁止纯 AI 文本追加）：
+   - 将 log 追加内容写入临时文件（如 `/tmp/wiki-log-entry.tmp`）
+   - 调用 `append-log.sh` 完成原子追加：
+     ```bash
+     bash ${SKILL_DIR}/scripts/append-log.sh "<raw 文件路径>" /tmp/wiki-log-entry.tmp
+     ```
+   - 脚本返回 `SUCCESS` 表示成功；失败时报告错误并停止，不得静默忽略
+   - **禁止**在 Step 12 使用纯 AI 文本生成直接写入 log.md（sub-agent 场景下极易被截断）
    - 注意：缓存更新已在 Step 8 通过 `create-source-page.sh` 自动完成，此处无需再调用 `cache.sh update`
 
 13. **向用户展示结果**（按 `WIKI_LANG` 切换语言）：
@@ -496,7 +501,10 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
 4. **提取 1-3 个关键概念**：
    - 如果对应实体页已存在 → 追加一句话说明
    - 如果不存在 → 在摘要页中用 `[待创建: [[概念名]]]` 标记
-5. **更新 index.md 和 log.md**（缓存已由 `create-source-page.sh` 自动更新）
+5. **更新 index.md 和 log.md**（必须使用脚本，禁止纯 AI 文本追加）：
+   - 将 log 追加内容写入临时文件，然后调用 `append-log.sh`（同完整处理流程 Step 12）
+   - index.md 由 AI 直接更新（结构简单，遗漏影响可接受）
+   - 缓存已由 `create-source-page.sh` 自动更新
 6. **跳过**：主题页创建/更新、overview 更新
 
 7. **向用户展示简化结果**（按 `WIKI_LANG` 切换语言）：
@@ -905,7 +913,7 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
 
 4. **更新 index.md 和 log.md**：
    - index.md 的"综合分析"分类下添加新报告条目
-   - log.md 追加：`## {日期} digest | {主题}`
+   - log.md 追加：写入临时文件后调用 `append-log.sh`（同 ingest 流程 Step 12 的保护机制）
 
 5. **向用户展示结果**（按 `WIKI_LANG` 切换语言）：
 
@@ -1131,3 +1139,4 @@ bash ${SKILL_DIR}/scripts/adapter-state.sh classify-run <source_id> <exit_code> 
 **输出示例**：
 已创建 wiki/synthesis/sessions/AI-agent-设计决策-20260413.md
 已更新 log.md
+
